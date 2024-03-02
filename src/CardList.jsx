@@ -25,10 +25,10 @@ function shuffle(array) {
 function CardList() {
 	const [cards, setCards] = useState([]);
 	useEffect(() => {
-		const newCards = [];
+		let newCards = [];
 		fetch("https://pokeapi.co/api/v2/pokemon?limit=10000").then((data) =>
 			data.json().then((json) => {
-				const pokemons = shuffle(json.results).slice(0, 39);
+				const pokemons = shuffle(json.results).slice(0, 16);
 
 				const requests = [];
 				for (let pokemon of pokemons) {
@@ -36,7 +36,8 @@ function CardList() {
 						dat.json().then((po) => {
 							const name = pokemon.name;
 							const imageUrl =
-								po.sprites.other["official-artwork"].front_default || po.sprites.other["dream_world"].front_default;
+								po.sprites.other["official-artwork"].front_default ||
+								po.sprites.other["dream_world"].front_default;
 							newCards.push([name.toUpperCase(), imageUrl]);
 						})
 					);
@@ -45,6 +46,8 @@ function CardList() {
 					);
 				}
 				Promise.all(requests).then(() => {
+					newCards = newCards.concat(newCards);
+					shuffle(newCards);
 					setCards(newCards);
 				}) 
 			})
